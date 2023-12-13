@@ -34,8 +34,8 @@ export const styles = StyleSheet.create({
     },
     inputRemark: {
         height: 40,
-        borderColor: colors.dark,
-        borderWidth: 1,
+        borderWidth: 2,
+        borderColor: colors.accent_primary,
         borderRadius: 10,
         marginBottom: 10,
         paddingLeft: 10,

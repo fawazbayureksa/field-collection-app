@@ -51,7 +51,9 @@ function HomeScreen(): JSX.Element {
 
         axiosInstance.get('my-tasks')
             .then(res => {
-                setData(res.data.data.slice(0, 3))
+                if (res.data.status === 'success') {
+                    setData(res.data.data.slice(0, 3))
+                }
             }).catch(error => {
                 console.error('get error my tasks', error);
             })
@@ -73,13 +75,18 @@ function HomeScreen(): JSX.Element {
             });
     }
 
+    const refreshControl = () => {
+        getTasks();
+        getDashboard();
+    }
+
     return (
         <>
             <ScrollView style={{ backgroundColor: colors.white }}
                 refreshControl={
                     <RefreshControl
                         refreshing={isLoading}
-                        onRefresh={getTasks}
+                        onRefresh={refreshControl}
                     />
                 }
             >

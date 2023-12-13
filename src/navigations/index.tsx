@@ -9,7 +9,7 @@ import { logout, setUser } from '../redux/actions/auth';
 import { navigate } from './RootNavigations';
 import { Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import Toast, { InfoToast } from 'react-native-toast-message';
 const Stack = createNativeStackNavigator<any>();
 
 interface dispatchProps {
@@ -50,6 +50,11 @@ function NavigationProvider(): JSX.Element {
     const handleLogout = () => {
       dispatch(logout()).then((res: any) => {
         navigate(MainRouteName.LOGIN);
+        Toast.show({
+          type: 'success',
+          text1: 'Notifikasi',
+          text2: 'Berhasil Keluar, Terima kasih'
+      });
       });
     };
     return (

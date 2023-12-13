@@ -13,6 +13,7 @@ import { navigate } from '../../navigations/RootNavigations';
 import { useNavigation } from '@react-navigation/native';
 import { MainRouteName } from '../../constants/mainRouteName';
 import Toast, { InfoToast } from 'react-native-toast-message';
+import IsEmpty from '../../components/IsEmpty';
 
 type Props = {}
 
@@ -28,7 +29,7 @@ export default function RemarkTask({ route }: routeProps): JSX.Element {
         phoneNumber: '',
         isAddress: '',
         paymentAmount: '',
-        ptpDate: new Date(),
+        ptpDate:'',
         paymentProof: null,
         visitProof: null,
         message: '',
@@ -42,6 +43,18 @@ export default function RemarkTask({ route }: routeProps): JSX.Element {
     const navigation = useNavigation<any>()
 
     const handleSubmit = () => {
+
+      if(IsEmpty(formData.type) || IsEmpty(formData.isAddress) || IsEmpty(formData.visitProof)){
+        Toast.show({
+            type: 'error',
+            text1: 'Notifikasi',
+            text2: 'Lengkapi data!'
+        });
+        return
+      }
+
+    //   console.log(formData);
+    //   return
 
         axiosInstance.post('remark-task', { formData })
             .then((response) => {
@@ -91,11 +104,26 @@ export default function RemarkTask({ route }: routeProps): JSX.Element {
 
             Upload.post(`upload/image`, formDataImage).
                 then((response: any) => {
-                    if (type == "payment") {
-                        setFormData({ ...formData, paymentProof: response.data.data });
-                    } else {
-                        setFormData({ ...formData, visitProof: response.data.data });
+
+                    if (response.data.data === undefined) {
+                        Toast.show({
+                            type: 'error',
+                            text1: 'Notifikasi',
+                            text2: 'Unggah gagal, Silahkan pilih gambar kembali!'
+                        });
+                    }else {   
+                        if (type == "payment") {
+                            setFormData({ ...formData, paymentProof: response.data.data });
+                        } else {
+                            setFormData({ ...formData, visitProof: response.data.data });
+                        }
+                        Toast.show({
+                            type: 'success',
+                            text1: 'Notifikasi',
+                            text2: 'Unggah gambar berhasil'
+                        });
                     }
+                    console.log(response.data.data);
                 }).catch(error => {
                     console.log("error upload gambar", error.response.data.message);
                 }).finally(() => setLoading(false));
@@ -272,12 +300,12 @@ export default function RemarkTask({ route }: routeProps): JSX.Element {
                         onCancel={hideDatePicker}
                     />
                     <Text style={{ color: colors.dark, }}>
-                        {convertDate(formData?.ptpDate)}
+                        {!IsEmpty(formData.ptpDate) ? convertDate(formData.ptpDate) : '-'}
                     </Text>
                 </View>
             </View>
 
-            <View>
+            <View style={{marginVertical:10}}>
                 <Text style={[styles.fs14, {
                     fontWeight: "700",
                     color: colors.dark
@@ -291,7 +319,7 @@ export default function RemarkTask({ route }: routeProps): JSX.Element {
                 </TouchableOpacity>
             </View>
 
-            <View>
+            <View style={{marginVertical:10}}>
                 <Text style={[styles.fs14, {
                     fontWeight: "700",
                     color: colors.dark
@@ -311,7 +339,7 @@ export default function RemarkTask({ route }: routeProps): JSX.Element {
                     color: colors.dark
                 }]}>Catatan</Text>
                 <TextInput
-                    style={styles.inputRemark}
+                    style={[styles.inputRemark]}
                     value={formData.message}
                     onChangeText={(value) => setFormData({ ...formData, message: value })}
                     multiline
