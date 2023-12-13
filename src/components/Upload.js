@@ -1,13 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { LOGOUT } from '../constants/mainRouteName';
-import { API_URL, Origin } from '@env';
+import { API_URL } from '@env';
 import { navigate } from '../navigations/RootNavigations';
 
-let headers = { 'Content-type': 'multipart/form-data', Origin: Origin };
+let headers = { 'Content-type': 'multipart/form-data' };
 
 const Upload = axios.create({
-    baseURL: 'https://51a9-158-140-180-1.ngrok-free.app/api/',
+    baseURL: API_URL,
     headers,
 });
 
