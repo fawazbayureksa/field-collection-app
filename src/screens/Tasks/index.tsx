@@ -28,7 +28,8 @@ function Tasks(): JSX.Element {
 
     const [data, setData] = useState<Datatype | undefined>(undefined);
     const [isLoading, setIsLoading] = useState(false);
-    const [tabName, setTabName] = useState([{ name: 'Hari Ini', id: 'today' }, { name: 'Bayar Sebagian', id: 'partial' }, { name: 'Janji Bayar', id: 'promise_to_pay' }, { name: 'Lunas', id: 'paid_off' }])
+    const [tabName, setTabName] = useState([{ name: 'Hari Ini', id: 'today' }, { name: 'Bayar Sebagian', id: 'partial' }, { name: 'Janji Bayar', id: 'promise_to_pay' }])
+    // { name: 'Lunas', id: 'paid_off' }
     const [selectedTab, setSelectedTab] = useState("semua");
     const [id, setId] = useState();
     const [modalVisible, setModalVisible] = useState<boolean>(false);
