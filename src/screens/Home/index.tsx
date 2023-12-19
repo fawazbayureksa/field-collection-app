@@ -49,10 +49,15 @@ function HomeScreen(): JSX.Element {
     const getTasks = () => {
         setIsLoading(true);
 
-        axiosInstance.get('my-tasks')
+        let params = {
+            page:1,
+            per_page:3
+        }
+        axiosInstance.get('my-tasks',{params})
             .then(res => {
                 if (res.data.status === 'success') {
-                    setData(res.data.data.slice(0, 3))
+                    // setData(res.data.data.slice(0, 3))
+                    setData(res.data.data)
                 }
             }).catch(error => {
                 console.error('get error my tasks', error);

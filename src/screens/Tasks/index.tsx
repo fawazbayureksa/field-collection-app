@@ -11,6 +11,7 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import DatePicker from 'react-native-date-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import convertDate from '../../components/DateTimeFormat';
+import TaskList from './TaskList';
 
 type StackParamList = {
     Home: undefined;
@@ -26,60 +27,33 @@ function Tasks(): JSX.Element {
 
     const WIDTH = Dimensions.get('window').width * 0.9;
 
-    const [data, setData] = useState<Datatype | undefined>(undefined);
+    const [data, setData] = useState<Array<any>>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [tabName, setTabName] = useState([{ name: 'Hari Ini', id: 'today' }, { name: 'Bayar Sebagian', id: 'partial' }, { name: 'Janji Bayar', id: 'promise_to_pay' }])
     // { name: 'Lunas', id: 'paid_off' }
+    
     const [selectedTab, setSelectedTab] = useState("semua");
     const [id, setId] = useState();
     const [modalVisible, setModalVisible] = useState<boolean>(false);
 
-    // Filter
 
+    // Filter
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [isDatePickerVisibleEnd, setDatePickerVisibilityEnd] = useState(false);
-    const [open, setOpen] = useState(false)
-    const [openEndDate, setOpenEndDate] = useState(false)
-
-
-    useEffect(() => {
-        getTasks("false");
-    }, [id])
+    const [isFilter, setIsFilter] = useState<boolean>(false);
 
     const onChangeTab = (name: any, id: any) => {
         setSelectedTab(name)
         setId(id)
     }
 
-    const getTasks = (filter: string) => {
-        setIsLoading(true);
-        let params = {
-            is_type: id,
-            filter: filter,
-            entry_start_date: startDate,
-            entry_end_date: endDate,
-        }
-
-
-        axiosInstance.get('my-tasks-filter', { params })
-            .then(res => {
-                setData(res.data.data)
-            }).catch(error => {
-                console.error('get error my tasks filter', error);
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
-    }
-
-
     const handleFilter = () => {
         hideDatePicker();
         hideDatePickerEnd();
         setModalVisible(!modalVisible);
-        getTasks("true");
+        setIsFilter(!isFilter);
     };
 
     const handleConfirm = (date: any, type: string) => {
@@ -101,44 +75,33 @@ function Tasks(): JSX.Element {
         setDatePickerVisibility(true);
     };
 
+
     return (
         <>
             <ScrollView
                 stickyHeaderIndices={[0]}
                 showsHorizontalScrollIndicator={false}
                 nestedScrollEnabled={true}
-                style={{ backgroundColor: colors.white, flex: 1, minHeight: "100%" }}
+                style={{ backgroundColor: colors.white, flex: 1}}
             >
                 <Tabs
                     selectedTab={selectedTab}
                     tabName={tabName}
                     onChangeTab={onChangeTab}
                 />
-                <View style={{ flex: 1, alignItems: "center" }}>
-                    {isLoading ?
-                        <View style={{ flex: 1, justifyContent: "center" }}>
-                            <ActivityIndicator size="large" color={colors.primary} />
-                        </View>
-                        :
-                        <>
-                            {data?.length > 0 ?
 
-                                <CardTask data={data} />
-
-                                :
-                                <View style={{ flex: 1, justifyContent: "center", flexDirection: "column", alignItems: "center" }}>
-                                    <Image source={require('../../assets/images/empty.png')} style={{ width: 300, maxHeight: 300 }} />
-                                    <Text style={[styles.fs14, { color: colors.dark }]}>Tidak Ada Data!</Text>
-                                </View>
-                            }
-                        </>
-                    }
-                </View>
+                <TaskList 
+                    id={id} 
+                    isFilter={isFilter} 
+                    startDate={startDate}
+                    endDate={endDate}
+                />
+                  
             </ScrollView>
             <FloatingButton
                 style={{
                     position: 'absolute',
-                    bottom: 10,
+                    bottom: 30,
                     justifyContent: 'center',
                     alignItems: 'center',
                     left: 0,
@@ -168,7 +131,7 @@ function Tasks(): JSX.Element {
                                     borderRadius: 10,
                                     backgroundColor: colors.approved,
                                 }}
-                                onPress={() => { getTasks("false"); setModalVisible(!modalVisible) }}>
+                                onPress={() => { setIsFilter(false); setModalVisible(!modalVisible) }}>
                                 <Text style={{ fontSize: 12, color: colors.white }}>Reset</Text>
                             </Pressable>
                         </View>

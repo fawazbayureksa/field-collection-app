@@ -33,7 +33,7 @@ function Tabs({ tabName, onChangeTab, selectedTab }: StackParamList): JSX.Elemen
                     </TouchableOpacity>
                     <View style={{ marginVertical: 5, height: selectedTab == "semua" ? 3 : 2, backgroundColor: selectedTab == "semua" ? colors.primary : '#DCDCDC' }} />
                 </View>
-                {tabName?.map((item, index) => {
+                {tabName?.map((item :any, index:any) => {
                     return (
                         <View key={index}>
                             <TouchableOpacity
