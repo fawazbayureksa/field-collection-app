@@ -8,6 +8,7 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { MainRouteName } from '../../constants/mainRouteName';
 import { useSelector } from 'react-redux';
 import axiosInstance from '../../components/AxiosInstance';
+import { Skeleton } from '../../components/Skeleton';
 
 interface DataProps {
     task_running: number;
@@ -186,7 +187,10 @@ function HomeScreen(): JSX.Element {
                     </View>
                     <View style={{ marginTop: 20, justifyContent: "center", alignItems: "center" }}>
                         {isLoading ?
-                            <ActivityIndicator size="large" color={colors.primary} />
+                                [3,2,1].map((item) => (
+                                    <Skeleton width={WIDTH} height={135} />
+                                ))
+                            // <ActivityIndicator size="large" color={colors.primary} />
                             :
                             <>
                                 {data?.length > 0 ?

@@ -9,6 +9,7 @@ import { Divider } from 'react-native-paper';
 import convertDate from '../../components/DateTimeFormat';
 import CurrencyFormat from '../../components/CurrencyFormat';
 import axiosInstance from '../../components/AxiosInstance';
+import { Skeleton } from '../../components/Skeleton';
 
 type props = {
     id: any;
@@ -152,11 +153,15 @@ const TaskList: React.FC<props> = ({id,isFilter,endDate,startDate}) => {
         return (
             <>
                 {isLoadMore && (
-                    <ActivityIndicator
-                        color={colors.accent_primary}
-                        size={'large'}
-                        style={{ padding: 10 }}
-                    />
+                      <View style={{
+                        alignItems: "center",
+                        marginHorizontal: 20,
+                        marginVertical: 10
+                    }}>{
+                    [3,2,1].map((item) => (
+                        <Skeleton width={WIDTH} height={135} />
+                    ))}
+                    </View>
                 )}
             </>
         );
@@ -196,8 +201,16 @@ const TaskList: React.FC<props> = ({id,isFilter,endDate,startDate}) => {
   return (
     <>
         {isLoading ?
-            <View style={{ flex: 1, justifyContent: "center" }}>
-                <ActivityIndicator size="large" color={colors.primary} />
+          <View style={{
+                alignItems: "center",
+                marginHorizontal: 20,
+                marginVertical: 10
+            }}>
+              { 
+                [5,4,3,2,1].map((item) => (
+                    <Skeleton width={WIDTH} height={135} />
+                ))
+                }
             </View>
             :
             <ScrollView>
