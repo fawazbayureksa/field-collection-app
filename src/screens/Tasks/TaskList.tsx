@@ -47,11 +47,13 @@ const TaskList: React.FC<props> = ({id,isFilter,endDate,startDate}) => {
 
         axiosInstance.get('my-tasks-filter', { params })
             .then(res => {
-                setData(res.data.data)
-                setCurrentPage(res.data.pagination.currentPage);
-                setLastPage(res.data.pagination.totalPages);
+                if (res.data.status == "success") {
+                    setData(res.data.data)
+                    setCurrentPage(res.data.pagination.currentPage);
+                    setLastPage(res.data.pagination.totalPages);
+                }
             }).catch(error => {
-                console.error('get error my tasks filter', error);
+                console.log('get error my tasks filter', error);
             })
             .finally(() => {
                 setIsLoading(false);
@@ -207,8 +209,10 @@ const TaskList: React.FC<props> = ({id,isFilter,endDate,startDate}) => {
                 marginVertical: 10
             }}>
               { 
-                [5,4,3,2,1].map((item) => (
-                    <Skeleton width={WIDTH} height={135} />
+                [5,4,3,2,1].map((item,index) => (
+                    <View key={index}>
+                        <Skeleton width={WIDTH} height={135} />
+                    </View>
                 ))
                 }
             </View>
@@ -226,9 +230,9 @@ const TaskList: React.FC<props> = ({id,isFilter,endDate,startDate}) => {
                         <View style={{
                             alignItems: "center",
                             marginHorizontal: 20,
-                            marginVertical: 10
+                            marginVertical: 200
                         }}>
-                            <Image source={require('../../assets/images/empty.png')} style={{ width: 300, maxHeight: 300 }} />
+                            <Image source={require('../../assets/images/empty.png')} style={{ width: 150, maxHeight: 150 }} />
                             <Text>Tidak Ada Data</Text>
                         </View>
                     )}

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Dimensions, Text, TouchableOpacity, View, ScrollView, ActivityIndicator } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Dimensions, Text, TouchableOpacity, View, ScrollView, ActivityIndicator, Linking, PanResponder, Animated, Easing } from 'react-native';
 import colors from '../../assets/theme/colors';
 import { Card, Button, Avatar, IconButton, Divider } from 'react-native-paper';
 import { styles } from '../../assets/theme/styles';
@@ -44,12 +44,53 @@ function DetailTask({ route }: DetailTaskProps): JSX.Element {
     const navigation = useNavigation<any>();
     const [data, setData] = useState<DataProps | undefined>();
     const [loading, setLoading] = useState(false);
+    const [modalUp, setModalUp] = useState(false);
+    const [phone, setPhone] = useState<any>();
 
 
-    useEffect(() => {
-        getDetailOrder()
+    const screenHeight = Dimensions.get('window').height;
+    const translateY = useRef(new Animated.Value(0)).current;
+  
+  useEffect(() => {
+      getDetailOrder()
     }, []);
+    
 
+    const resetModalPosition = () => {
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: false,
+        }).start();
+      };
+
+    const showModal = () => {
+        setModalUp(true);
+        Animated.timing(translateY, {
+          toValue: 1,
+          duration: 300,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: false,
+        }).start();
+      };
+    
+      const hideModal = () => {
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 400,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: false,
+        }).start(() => setModalUp(false));
+      };
+    
+      useEffect(() => {
+        if (modalUp) {
+          showModal();
+        } else {
+          hideModal();
+        }
+      }, [modalUp]);
+    
 
     const getDetailOrder = () => {
         setLoading(true)
@@ -72,7 +113,37 @@ function DetailTask({ route }: DetailTaskProps): JSX.Element {
             text2: 'Salin nomor telepon berhasil'
         });
     };
+    const handelContact = (phone:any) => {
+        setPhone(phone);
+        setModalUp(!modalUp);
+    }
+    const contactUser = (type:string) => {
+        if(type == "wa") {
+            Linking.openURL('https://wa.me//'+'+'+62+phone);
+        }else {
+            Linking.openURL('tel:'+'+'+62+phone);
+        }
+    }
 
+    const panResponder = useRef(
+        PanResponder.create({
+          onStartShouldSetPanResponder: () => true,
+          onPanResponderMove: (_, gestureState) => {
+            if (gestureState.dy > 0) {
+              translateY.setValue(gestureState.dy);
+            }
+          },
+          onPanResponderRelease: (_, gestureState) => {
+            if (gestureState.dy > 50) {
+              // If the user drags down more than 50 units, close the modal
+              hideModal();
+            } else {
+              // If not, reset the modal to its original position
+                  resetModalPosition();
+            }
+          },
+        })
+      ).current;
 
 
     return (<>
@@ -134,7 +205,7 @@ function DetailTask({ route }: DetailTaskProps): JSX.Element {
                                 style={{
                                     backgroundColor: colors.primary,
                                     marginLeft: 2,
-                                    paddingHorizontal: 5,
+                                    paddingHorizontal: 7,
                                     borderRadius: 5,
                                     elevation: 2
                                 }}
@@ -142,6 +213,20 @@ function DetailTask({ route }: DetailTaskProps): JSX.Element {
                             >
                                 <Text style={[styles.fs10, { color: colors.white }]}>
                                     Salin
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: colors.accent_primary,
+                                    marginLeft: 2,
+                                    paddingHorizontal: 7,
+                                    borderRadius: 5,
+                                    elevation: 2
+                                }}
+                                onPress={() => handelContact(data?.phone_number) }
+                            >
+                                <Text style={[styles.fs10, { color: colors.white }]}>
+                                    Hubungi
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -255,6 +340,59 @@ function DetailTask({ route }: DetailTaskProps): JSX.Element {
                     </TouchableOpacity>
                 </View>
             </ScrollView >
+        }
+        {modalUp &&
+            <Animated.View style={{
+                transform: [
+                    {
+                      translateY: translateY.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [180, 0],
+                      }),
+                    },
+                  ],
+                backgroundColor:"#fff",
+                height:180, 
+                borderTopEndRadius:30,
+                borderTopStartRadius:30,
+                elevation: 5,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.8,
+                shadowRadius: 1, 
+            }}
+            {...panResponder.panHandlers}
+            >
+                <View style={{alignItems:"center"}}>
+                    <TouchableOpacity style={{borderWidth:2,borderColor:"#333",width:80,marginTop:5,borderRadius:10}} onPress={() => setModalUp(!modalUp)}></TouchableOpacity>
+                </View>
+                <View style={{flex:1,justifyContent:"space-around",alignItems:"center",flexDirection:"row"}}>
+                    <TouchableOpacity
+                        style={{
+                            padding:10,
+                            height: 40,
+                            justifyContent:"center",
+                            backgroundColor: colors.primary,
+                            borderRadius: 30,
+                        }}
+                        onPress={() => contactUser("wa")}
+                    >
+                        <Text style={{color:colors.white}}>WhatsApp</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{
+                            padding:10,
+                            height: 40,
+                            justifyContent:"center",
+                            backgroundColor: colors.bgColor,
+                            borderRadius: 30,
+                        }}
+                        onPress={() => contactUser("call")}
+                    >
+                        <Text style={{color:colors.white}}>Telepon Biasa</Text>
+                    </TouchableOpacity>
+                </View>
+            </Animated.View>
         }
     </>
     )

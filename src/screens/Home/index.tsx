@@ -187,8 +187,10 @@ function HomeScreen(): JSX.Element {
                     </View>
                     <View style={{ marginTop: 20, justifyContent: "center", alignItems: "center" }}>
                         {isLoading ?
-                                [3,2,1].map((item) => (
-                                    <Skeleton width={WIDTH} height={135} />
+                                [3,2,1].map((item,index) => (
+                                    <View key={index}>
+                                    <Skeleton width={WIDTH} height={135}/>
+                                    </View>
                                 ))
                             // <ActivityIndicator size="large" color={colors.primary} />
                             :
@@ -197,7 +199,7 @@ function HomeScreen(): JSX.Element {
                                     <CardTask data={data} />
                                     :
                                     <View style={{ flex: 1, justifyContent: "center", flexDirection: "column", alignItems: "center" }}>
-                                        <Image source={require('../../assets/images/empty.png')} style={{ width: 300, maxHeight: 300 }} />
+                                        <Image source={require('../../assets/images/empty.png')} style={{ width: 150, maxHeight: 150 }} />
                                         <Text>Tidak Ada Data</Text>
                                     </View>
                                 }
