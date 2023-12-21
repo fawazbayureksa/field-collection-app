@@ -10,8 +10,9 @@ import FloatingButton from '../../components/FloatingButton';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import DatePicker from 'react-native-date-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import convertDate from '../../components/DateTimeFormat';
+import convertDate, { convertDate2 } from '../../components/DateTimeFormat';
 import TaskList from './TaskList';
+import { ArrowRotateLeft, ArrowSwapHorizontal, Calendar, CloseCircle, SearchNormal1 } from 'iconsax-react-native';
 
 type StackParamList = {
     Home: undefined;
@@ -117,73 +118,59 @@ function Tasks(): JSX.Element {
                     setModalVisible(!modalVisible);
                 }}
             >
-                <View style={[styles.centeredView, { marginHorizontal: 20 }]}>
-                    <View style={[styles.modalView, { width: WIDTH }]}>
-                        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                            <Text style={{ fontSize: 14, fontWeight: "700", marginRight: WIDTH * 0.3 }}>Modal Filter</Text>
-                            <Pressable
+                <View style={[styles.centeredView, { marginHorizontal: 20}]}>
+                    <View style={[styles.modalView, { width: WIDTH, backgroundColor:colors.accent }]}>
+                            <TouchableOpacity
                                 style={{
+                                    position: 'absolute',
+                                    right:5,
                                     padding: 5,
-                                    width: 50,
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    height: 25,
+                                    height: 30,
                                     borderRadius: 10,
-                                    backgroundColor: colors.approved,
                                 }}
-                                onPress={() => { setIsFilter(false); setModalVisible(!modalVisible) }}>
-                                <Text style={{ fontSize: 12, color: colors.white }}>Reset</Text>
-                            </Pressable>
-                        </View>
-                        <View style={{ flexDirection: "row", alignItems: "center" }}>
-                            <TouchableOpacity style={{
-                                padding: 5, backgroundColor: colors.white, width: WIDTH * 0.3,
-                                borderRadius: 10,
-                                marginTop: 5,
-                                marginRight: 10,
-                                borderWidth: 1,
-                            }}
-                                onPress={showDatePicker}
-                            >
-                                <Text style={[{ fontSize: 12, color: colors.dark }]}>
-                                    Tanggal Mulai
-                                </Text>
+                                onPress={() => setModalVisible(!modalVisible)}>
+                                <CloseCircle size="24" color={colors.white} variant="Outline"/>
                             </TouchableOpacity>
-                            <DateTimePickerModal
-                                isVisible={isDatePickerVisible}
-                                mode="date"
-                                onConfirm={(date) => handleConfirm(date, 'startDate')}
-                                onCancel={hideDatePicker}
-                            />
-                            <Text style={{ color: colors.dark, }}>
-                                {convertDate(startDate)}
-                            </Text>
+                        {/* <View style={{ flexDirection: "row", justifyContent: "center",marginTop:10 }}> */}
+                            {/* <Text style={{ fontSize: 18, fontWeight: "600",color:colors.white }}>Modal Filter</Text> */}
+                        {/* </View> */}
+                        <View style={{flexDirection:"row",marginVertical:20,alignItems:"center"}}>
+                                <TouchableOpacity style={{flexDirection:"row",alignItems:"center"}} onPress={showDatePicker}>
+                                     <Calendar size="40" color={colors.white} variant='Bold'/>
+                                     <View style={{backgroundColor:colors.white,borderRadius:5,padding:5}}>
+                                        <Text  style={{ fontSize: 14, color: colors.accent }}>Mulai</Text>
+                                            <DateTimePickerModal
+                                                isVisible={isDatePickerVisible}
+                                                mode="date"
+                                                onConfirm={(date) => handleConfirm(date, 'startDate')}
+                                                onCancel={hideDatePicker}
+                                            />
+                                            <Divider />
+                                            <Text style={{ color:colors.accent,fontWeight:"600" }}>
+                                                {convertDate2(startDate)}
+                                            </Text>
+                                     </View>
+                                </TouchableOpacity>
+                                <View style={{marginHorizontal:10}}>
+                                    <ArrowSwapHorizontal size="20" color="#FFFFFF" variant="Outline"/>
+                                </View>
+                                <TouchableOpacity style={{flexDirection:"row",alignItems:"center"}} onPress={() => setDatePickerVisibilityEnd(!isDatePickerVisibleEnd)}>
+                                     <Calendar size="32" color={colors.white} variant='Bold'/>
+                                     <View style={{backgroundColor:colors.white,borderRadius:5,padding:5}}>
+                                        <Text  style={{ fontSize: 14, color: colors.accent }}>Akhir</Text>
+                                     <DateTimePickerModal
+                                        isVisible={isDatePickerVisibleEnd}
+                                        mode="date"
+                                        onConfirm={(date) => handleConfirm(date, 'endDate')}
+                                        onCancel={hideDatePickerEnd}
+                                    />
+                                     <Divider />
+                                    <Text style={{ color:colors.accent,fontWeight:"600" }}>
+                                        {convertDate2(endDate)}
+                                    </Text>
+                                     </View>
+                                </TouchableOpacity>
                         </View>
-                        <View style={{ flexDirection: "row", alignItems: "center" }}>
-                            <TouchableOpacity style={{
-                                padding: 5, backgroundColor: colors.white, width: WIDTH * 0.3,
-                                borderRadius: 10,
-                                marginTop: 5,
-                                marginRight: 10,
-                                borderWidth: 1,
-                            }}
-                                onPress={() => setDatePickerVisibilityEnd(!isDatePickerVisibleEnd)}
-                            >
-                                <Text style={[{ fontSize: 12, color: colors.dark }]}>
-                                    Tanggal Akhir
-                                </Text>
-                            </TouchableOpacity>
-                            <DateTimePickerModal
-                                isVisible={isDatePickerVisibleEnd}
-                                mode="date"
-                                onConfirm={(date) => handleConfirm(date, 'endDate')}
-                                onCancel={hideDatePickerEnd}
-                            />
-                            <Text style={{ color: colors.dark, }}>
-                                {convertDate(endDate)}
-                            </Text>
-                        </View>
-
                         <View style={{ flexDirection: "row-reverse", marginTop: 20 }}>
                             <Pressable
                                 style={{
@@ -194,10 +181,12 @@ function Tasks(): JSX.Element {
                                     height: 30,
                                     borderRadius: 10,
                                     marginLeft: 20,
-                                    backgroundColor: colors.accent_primary,
+                                    backgroundColor: colors.white,
+                                    flexDirection:"row"
                                 }}
                                 onPress={handleFilter}>
-                                <Text style={{ fontSize: 14, color: colors.white }}>Cari</Text>
+                                    <SearchNormal1 size="14" color={colors.accent} variant="Outline" />
+                                <Text style={{ fontSize: 14, color: colors.accent }}>Cari</Text>
                             </Pressable>
                             <Pressable
                                 style={{
@@ -207,10 +196,13 @@ function Tasks(): JSX.Element {
                                     alignItems: "center",
                                     height: 30,
                                     borderRadius: 10,
-                                    backgroundColor: colors.grey,
+                                    marginLeft: 20,
+                                    backgroundColor: colors.danger,
+                                    flexDirection:"row"
                                 }}
-                                onPress={() => setModalVisible(!modalVisible)}>
-                                <Text style={{ fontSize: 14, color: colors.white }}>Tutup</Text>
+                                onPress={() => { setIsFilter(false); setModalVisible(!modalVisible) }}>
+                                    <ArrowRotateLeft size="14" color={colors.white}/>
+                                <Text style={{ fontSize: 12, color: colors.white }}>Reset</Text>
                             </Pressable>
                         </View>
                     </View>

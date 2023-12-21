@@ -2,7 +2,7 @@ export default {
     primary: '#01793B',
     accent_primary: '#60b589',
     secondary: '#555F61',
-    accent: '#01793B ',
+    accent: '#01793B',
     danger: '#d1395c',
     success: '#2dce89',
     grey: '#adb5bd',

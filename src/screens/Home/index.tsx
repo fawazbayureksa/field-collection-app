@@ -9,6 +9,7 @@ import { MainRouteName } from '../../constants/mainRouteName';
 import { useSelector } from 'react-redux';
 import axiosInstance from '../../components/AxiosInstance';
 import { Skeleton } from '../../components/Skeleton';
+import { Task } from 'iconsax-react-native';
 
 interface DataProps {
     task_running: number;
@@ -179,10 +180,17 @@ function HomeScreen(): JSX.Element {
                             backgroundColor: colors.white,
                             borderRadius: 10,
                             alignItems: "center",
+                            flexDirection:"row",
+                            justifyContent:"center"
                         }}
                             onPress={() => handleListTasks()}
                         >
-                            <Text style={[styles.fs12, { color: colors.primary }]}>Tugas Saya</Text>
+                            <Task 
+                                size="20" 
+                                color={colors.accent_primary}
+                                variant='Bold'
+                            />
+                            <Text style={[styles.fs12, { color: colors.primary,marginLeft:5 }]}>Tugas Saya</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={{ marginTop: 20, justifyContent: "center", alignItems: "center" }}>

@@ -10,6 +10,7 @@ import { navigate } from './RootNavigations';
 import { Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast, { InfoToast } from 'react-native-toast-message';
+import { ArrowCircleLeft, ArrowCircleLeft2 } from 'iconsax-react-native';
 const Stack = createNativeStackNavigator<any>();
 
 interface dispatchProps {
@@ -60,9 +61,10 @@ function NavigationProvider(): JSX.Element {
     return (
       <TouchableOpacity
         onPress={() => handleLogout()}
-        style={{ backgroundColor: colors.white, padding: 5, borderRadius: 10 }}
+        style={{ backgroundColor: colors.white, padding: 5, borderRadius: 10,flexDirection:"row" }}
       >
-        <Text style={{ color: colors.primary }}> Keluar</Text>
+        <ArrowCircleLeft2 size="20" color={colors.accent_primary}/>
+        <Text style={{ color: colors.primary,fontWeight:"500" }}> Keluar</Text>
       </TouchableOpacity>
     );
   };
