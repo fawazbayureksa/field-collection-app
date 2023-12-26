@@ -161,7 +161,7 @@ const TaskList: React.FC<props> = ({id,isFilter,endDate,startDate}) => {
                         marginVertical: 10
                     }}>{
                     [3,2,1].map((item) => (
-                        <Skeleton width={WIDTH} height={135} />
+                        <Skeleton width={WIDTH} height={135} bgColor='#eeeeee' />
                     ))}
                     </View>
                 )}
@@ -211,10 +211,9 @@ const TaskList: React.FC<props> = ({id,isFilter,endDate,startDate}) => {
               { 
                 [5,4,3,2,1].map((item,index) => (
                     <View key={index}>
-                        <Skeleton width={WIDTH} height={135} />
+                        <Skeleton width={WIDTH} height={135} bgColor="#eeeeee" />
                     </View>
-                ))
-                }
+                ))}
             </View>
             :
             <ScrollView>

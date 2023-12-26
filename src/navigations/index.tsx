@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MainRouteName } from '../constants/mainRouteName';
-import { DetailTask, HomeScreen, Login, RemarkTask, Tasks } from '../screens';
+import { DetailTask, HistoryTask, HomeScreen, Login, RemarkTask, Tasks } from '../screens';
 import colors from '../assets/theme/colors';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, setUser } from '../redux/actions/auth';
@@ -112,6 +112,10 @@ function NavigationProvider(): JSX.Element {
             <Stack.Screen
               name={MainRouteName.REMARK_TASK}
               component={RemarkTask}
+            />
+            <Stack.Screen
+              name={MainRouteName.HISTORY_TASK}
+              component={HistoryTask}
             />
           </Stack.Navigator>
         </NavigationContainer>

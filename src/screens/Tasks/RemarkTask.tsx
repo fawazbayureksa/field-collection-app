@@ -225,7 +225,8 @@ export default function RemarkTask({ route }: routeProps): JSX.Element {
                     <Picker.Item label="Pilih" value="" />
                     <Picker.Item label="Lunas (Contract Amount)" value="paid_off_contarct_amount" />
                     <Picker.Item label="Lunas (Due Amount)" value="paid_off_due_amount" />
-                    <Picker.Item label="Janji Bayar" value="promise_to_pay" />
+                    <Picker.Item label="Janji Bayar (Tidak Kooperatif)" value="promise_to_pay" />
+                    <Picker.Item label="Janji Bayar (Kooperatif)" value="promise_to_pay_cooperative" />
                     <Picker.Item label="Bayar Sebagian" value="partial" />
                     <Picker.Item label="Permintaan Keringanan" value="payment_relief" />
                     <Picker.Item label="Gagal Bayar" value="failed_payment" />

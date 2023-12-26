@@ -5,9 +5,10 @@ import { Animated, StyleSheet, View } from 'react-native';
 interface Props  {
     width:number;
     height:number;
+    bgColor:string;
 }
 
-export const Skeleton: React.FC<Props> = ({width,height}) => {
+export const Skeleton: React.FC<Props> = ({width,height,bgColor}) => {
    const opacity = useRef(new Animated.Value(0.3));
 
     useEffect(() => {
@@ -30,7 +31,7 @@ export const Skeleton: React.FC<Props> = ({width,height}) => {
 
    return (
     <>
-         <Animated.View style={[{opacity:opacity.current, height, width,borderRadius:10,marginBottom:10},styleSkeleton.Skeleton]}>
+         <Animated.View style={[{opacity:opacity.current, height, width,borderRadius:10,marginBottom:10,backgroundColor:bgColor},styleSkeleton.Skeleton]}>
             <View style={{position:"relative",top:10,marginHorizontal:10}} >
                 <Animated.View style={[{opacity:opacity.current, height:30, width:"100%",borderRadius:3,backgroundColor:"#ddd",marginBottom:5}]} />
                 <Animated.View style={[{opacity:opacity.current, height:10, width:"100%",borderRadius:3,backgroundColor:"#ddd",marginBottom:5}]} />
@@ -45,6 +46,6 @@ export const Skeleton: React.FC<Props> = ({width,height}) => {
 
 const styleSkeleton = StyleSheet.create({
     Skeleton:{
-        backgroundColor:"#eeeeee",
+        // backgroundColor:"#eeeeee",
     }
 })

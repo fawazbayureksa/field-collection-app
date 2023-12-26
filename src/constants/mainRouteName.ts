@@ -22,4 +22,5 @@ export const MainRouteName = {
     TASK_LIST: 'Daftar Tugas',
     DETAIL_TASK: 'Detail',
     REMARK_TASK: 'Remark Task',
+    HISTORY_TASK: 'Riwayat Tagihan',
 };

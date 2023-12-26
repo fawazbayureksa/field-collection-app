@@ -9,7 +9,7 @@ import { MainRouteName } from '../../constants/mainRouteName';
 import { useSelector } from 'react-redux';
 import axiosInstance from '../../components/AxiosInstance';
 import { Skeleton } from '../../components/Skeleton';
-import { Task } from 'iconsax-react-native';
+import { Element3, Task } from 'iconsax-react-native';
 
 interface DataProps {
     task_running: number;
@@ -40,6 +40,9 @@ function HomeScreen(): JSX.Element {
 
     const handleListTasks = () => {
         navigation.navigate(MainRouteName.TASK_LIST);
+    }
+    const handleHistoryTasks = () => {
+        navigation.navigate(MainRouteName.HISTORY_TASK);
     }
 
     const handleLogout = () => {
@@ -169,10 +172,40 @@ function HomeScreen(): JSX.Element {
                         </Card>
 
                     </View>
-                    <View style={{ marginVertical: 10, alignItems: "center", marginTop: -20 }}>
+                    <View style={{ 
+                            marginVertical: 10, 
+                            marginHorizontal:40, 
+                            alignItems: "center", 
+                            marginTop: -20,
+                            flexDirection:"row",
+                            justifyContent:"space-around" 
+                        }}>
                         <TouchableOpacity style={{
                             height: 40,
-                            width: WIDTH * 0.5,
+                            width: WIDTH * 0.4,
+                            padding: 10,
+                            borderWidth: 1, // Add a border
+                            borderStyle: "solid",
+                            borderColor: colors.primary,
+                            backgroundColor: colors.white,
+                            borderRadius: 10,
+                            // marginRight:5,
+                            alignItems: "center",
+                            flexDirection:"row",
+                            justifyContent:"center"
+                        }}
+                            onPress={() => handleListTasks()}
+                        >
+                            <Element3 
+                                size="20" 
+                                color={colors.accent_primary}
+                                variant='Bold'
+                            />
+                            <Text style={[styles.fs12, { color: colors.primary,marginLeft:5 }]}>Tugas Saya</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{
+                            height: 40,
+                            width: WIDTH * 0.4,
                             padding: 10,
                             borderWidth: 1, // Add a border
                             borderStyle: "solid",
@@ -183,21 +216,21 @@ function HomeScreen(): JSX.Element {
                             flexDirection:"row",
                             justifyContent:"center"
                         }}
-                            onPress={() => handleListTasks()}
+                            onPress={() => handleHistoryTasks()}
                         >
                             <Task 
                                 size="20" 
                                 color={colors.accent_primary}
                                 variant='Bold'
                             />
-                            <Text style={[styles.fs12, { color: colors.primary,marginLeft:5 }]}>Tugas Saya</Text>
+                            <Text style={[styles.fs12, { color: colors.primary,marginLeft:5 }]}>Riwayat Tagihan</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={{ marginTop: 20, justifyContent: "center", alignItems: "center" }}>
                         {isLoading ?
                                 [3,2,1].map((item,index) => (
                                     <View key={index}>
-                                    <Skeleton width={WIDTH} height={135}/>
+                                    <Skeleton width={WIDTH} height={135} bgColor='#eeeeee'/>
                                     </View>
                                 ))
                             // <ActivityIndicator size="large" color={colors.primary} />

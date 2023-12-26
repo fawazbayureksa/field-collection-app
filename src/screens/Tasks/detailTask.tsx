@@ -13,6 +13,7 @@ import { navigationRef } from '../../navigations/RootNavigations';
 import { useNavigation } from '@react-navigation/native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import Toast, { InfoToast } from 'react-native-toast-message';
+import { Call, CallCalling, ClipboardText,  Whatsapp } from 'iconsax-react-native';
 
 type DetailTaskProps = {
     route: any; // Add data prop here
@@ -48,7 +49,6 @@ function DetailTask({ route }: DetailTaskProps): JSX.Element {
     const [phone, setPhone] = useState<any>();
 
 
-    const screenHeight = Dimensions.get('window').height;
     const translateY = useRef(new Animated.Value(0)).current;
   
   useEffect(() => {
@@ -56,13 +56,13 @@ function DetailTask({ route }: DetailTaskProps): JSX.Element {
     }, []);
     
 
-    const resetModalPosition = () => {
-        Animated.timing(translateY, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: false,
-        }).start();
-      };
+    // const resetModalPosition = () => {
+    //     Animated.timing(translateY, {
+    //       toValue: 0,
+    //       duration: 300,
+    //       useNativeDriver: false,
+    //     }).start();
+    //   };
 
     const showModal = () => {
         setModalUp(true);
@@ -125,26 +125,6 @@ function DetailTask({ route }: DetailTaskProps): JSX.Element {
         }
     }
 
-    const panResponder = useRef(
-        PanResponder.create({
-          onStartShouldSetPanResponder: () => true,
-          onPanResponderMove: (_, gestureState) => {
-            if (gestureState.dy > 0) {
-              translateY.setValue(gestureState.dy);
-            }
-          },
-          onPanResponderRelease: (_, gestureState) => {
-            if (gestureState.dy > 50) {
-              // If the user drags down more than 50 units, close the modal
-              hideModal();
-            } else {
-              // If not, reset the modal to its original position
-                  resetModalPosition();
-            }
-          },
-        })
-      ).current;
-
 
     return (<>
         {loading ?
@@ -198,34 +178,48 @@ function DetailTask({ route }: DetailTaskProps): JSX.Element {
                             </Text>
                         </View>
                         <View style={[styles.col9, { flexDirection: "row", alignItems: "center" }]}>
-                            <Text style={[styles.fs12, { color: colors.dark }]}>
+                            <Text style={[styles.fs12, { color: colors.dark,fontWeight:"600" }]}>
                                 {data?.phone_number}
                             </Text>
                             <TouchableOpacity
                                 style={{
                                     backgroundColor: colors.primary,
-                                    marginLeft: 2,
+                                    marginLeft: 5,
                                     paddingHorizontal: 7,
+                                    paddingVertical:5,
                                     borderRadius: 5,
-                                    elevation: 2
+                                    elevation: 2,
+                                    flexDirection: "row",
                                 }}
                                 onPress={() => copyToClipboard(data?.phone_number)}
                             >
-                                <Text style={[styles.fs10, { color: colors.white }]}>
+                                <ClipboardText
+                                        size="12"
+                                        color={colors.white}
+                                        variant='Bold'
+                                    />
+                                <Text style={[styles.fs10, { color: colors.white,marginLeft:5 }]}>
                                     Salin
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={{
                                     backgroundColor: colors.accent_primary,
-                                    marginLeft: 2,
+                                    marginLeft:5,
                                     paddingHorizontal: 7,
+                                    paddingVertical:5,
                                     borderRadius: 5,
-                                    elevation: 2
+                                    elevation: 2,
+                                    flexDirection:"row"
                                 }}
                                 onPress={() => handelContact(data?.phone_number) }
                             >
-                                <Text style={[styles.fs10, { color: colors.white }]}>
+                                <Call
+                                    size="12"
+                                    color={colors.white}
+                                    variant="Bold"
+                                    />
+                                <Text style={[styles.fs10, { color: colors.white,marginLeft:5 }]}>
                                     Hubungi
                                 </Text>
                             </TouchableOpacity>
@@ -361,35 +355,47 @@ function DetailTask({ route }: DetailTaskProps): JSX.Element {
                 shadowOpacity: 0.8,
                 shadowRadius: 1, 
             }}
-            {...panResponder.panHandlers}
             >
-                <View style={{alignItems:"center"}}>
-                    <TouchableOpacity style={{borderWidth:2,borderColor:"#333",width:80,marginTop:5,borderRadius:10}} onPress={() => setModalUp(!modalUp)}></TouchableOpacity>
-                </View>
+                <TouchableOpacity style={{alignItems:"center"}} onPress={() => setModalUp(!modalUp)}>
+                    <View style={{borderWidth:3,borderColor:colors.grey_900,width:80,marginTop:5,borderRadius:10}} ></View>
+                    {/* <Text>Tutup</Text> */}
+                </TouchableOpacity>
                 <View style={{flex:1,justifyContent:"space-around",alignItems:"center",flexDirection:"row"}}>
                     <TouchableOpacity
                         style={{
                             padding:10,
                             height: 40,
                             justifyContent:"center",
-                            backgroundColor: colors.primary,
+                            backgroundColor: colors.grey_100,
                             borderRadius: 30,
+                            flexDirection:"row"
                         }}
                         onPress={() => contactUser("wa")}
                     >
-                        <Text style={{color:colors.white}}>WhatsApp</Text>
+                        <Whatsapp
+                            size="18"
+                            color={colors.primary}
+                            variant="Bold"
+                        />
+                        <Text style={{color:colors.accent_primary,marginLeft:5}}>WhatsApp</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={{
                             padding:10,
                             height: 40,
                             justifyContent:"center",
-                            backgroundColor: colors.bgColor,
+                            backgroundColor: colors.grey_100,
                             borderRadius: 30,
+                            flexDirection:"row"
                         }}
                         onPress={() => contactUser("call")}
                     >
-                        <Text style={{color:colors.white}}>Telepon Biasa</Text>
+                        <CallCalling
+                            size="18"
+                            color={colors.danger}
+                            variant="Bold"
+                        />
+                        <Text style={{color:colors.danger,marginLeft:5}}>Telepon Biasa</Text>
                     </TouchableOpacity>
                 </View>
             </Animated.View>
