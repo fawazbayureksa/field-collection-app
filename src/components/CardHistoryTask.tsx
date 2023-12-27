@@ -18,8 +18,7 @@ const CardHistoryTask: React.FC<CardHsitoryTaskProps> = ({ item,handlePress }) =
     const remarks = typeRemarks(item.type);
 
     const WIDTH = Dimensions.get('window').width * 0.95;
-    return (
-                
+    return ( 
             <TouchableOpacity style={{
                 backgroundColor: colors.white,
                 height: "auto",
@@ -33,8 +32,8 @@ const CardHistoryTask: React.FC<CardHsitoryTaskProps> = ({ item,handlePress }) =
                 padding: 10,
                 // justifyContent: "center",
             }}
-            key={item.id}
             onPress={handlePress}
+            key={item.id}
             >
                 <View style={{flexDirection:"row",justifyContent:"space-between"}}>
                     <View>

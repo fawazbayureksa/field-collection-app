@@ -25,7 +25,9 @@ function HomeScreen(): JSX.Element {
     const [isLoading, setIsLoading] = useState(false);
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<any>();
-    const [dashboard, setDashboard] = useState<DataProps | undefined>(undefined);
+    const [dashboard, setDashboard] = useState<DataProps | undefined>();
+    const [featureHistory, setFeatureHistory] = useState<any | undefined>();
+    const [featureMytasks, setFeatureMytasks] = useState<any | undefined>();
 
     useEffect(() => {
         handleLogout();
@@ -77,6 +79,14 @@ function HomeScreen(): JSX.Element {
         axiosInstance.get('get-dashboard')
             .then(res => {
                 setDashboard(res.data.data)
+                res.data.data.features.forEach((item:any) => {
+                    if (item.name == 'history_remark'){
+                        setFeatureHistory(item);
+                    }else if (item.name == 'my_tasks'){
+                        setFeatureMytasks(item);
+                    }
+                });
+
             }).catch(error => {
                 console.error('get error dashboard', error);
             })
@@ -84,6 +94,8 @@ function HomeScreen(): JSX.Element {
                 setLoading(false);
             });
     }
+
+    console.log('features',featureHistory);
 
     const refreshControl = () => {
         getTasks();
@@ -180,6 +192,7 @@ function HomeScreen(): JSX.Element {
                             flexDirection:"row",
                             justifyContent:"space-around" 
                         }}>
+                        {(featureMytasks) && (featureMytasks?.is_active == true) &&
                         <TouchableOpacity style={{
                             height: 40,
                             width: WIDTH * 0.4,
@@ -203,28 +216,31 @@ function HomeScreen(): JSX.Element {
                             />
                             <Text style={[styles.fs12, { color: colors.primary,marginLeft:5 }]}>Tugas Saya</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{
-                            height: 40,
-                            width: WIDTH * 0.4,
-                            padding: 10,
-                            borderWidth: 1, // Add a border
-                            borderStyle: "solid",
-                            borderColor: colors.primary,
-                            backgroundColor: colors.white,
-                            borderRadius: 10,
-                            alignItems: "center",
-                            flexDirection:"row",
-                            justifyContent:"center"
-                        }}
-                            onPress={() => handleHistoryTasks()}
-                        >
-                            <Task 
-                                size="20" 
-                                color={colors.accent_primary}
-                                variant='Bold'
-                            />
-                            <Text style={[styles.fs12, { color: colors.primary,marginLeft:5 }]}>Riwayat Tagihan</Text>
-                        </TouchableOpacity>
+                        }
+                        {(featureHistory) && (featureHistory?.is_active == true) &&
+                            <TouchableOpacity style={{
+                                height: 40,
+                                width: WIDTH * 0.4,
+                                padding: 10,
+                                borderWidth: 1, // Add a border
+                                borderStyle: "solid",
+                                borderColor: colors.primary,
+                                backgroundColor: colors.white,
+                                borderRadius: 10,
+                                alignItems: "center",
+                                flexDirection:"row",
+                                justifyContent:"center"
+                            }}
+                                onPress={() => handleHistoryTasks()}
+                            >
+                                <Task 
+                                    size="20" 
+                                    color={colors.accent_primary}
+                                    variant='Bold'
+                                />
+                                <Text style={[styles.fs12, { color: colors.primary,marginLeft:5 }]}>Riwayat Tagihan</Text>
+                            </TouchableOpacity>
+                        }
                     </View>
                     <View style={{ marginTop: 20, justifyContent: "center", alignItems: "center" }}>
                         {isLoading ?
