@@ -79,7 +79,7 @@ function HomeScreen(): JSX.Element {
         axiosInstance.get('get-dashboard')
             .then(res => {
                 setDashboard(res.data.data)
-                res.data.data.features.forEach((item:any) => {
+                res.data.data.features?.forEach((item:any) => {
                     if (item.name == 'history_remark'){
                         setFeatureHistory(item);
                     }else if (item.name == 'my_tasks'){
