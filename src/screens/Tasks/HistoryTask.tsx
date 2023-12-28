@@ -51,17 +51,15 @@ function HistoryTask({}: Props) {
 
         let params = {
             page:1,
-            per_page:3
+            per_page:10
         }
         axiosInstance.get('history-remarks',{params})
             .then(res => {
                 if (res.data.status === 'success') {
-                    // setData(res.data.data.slice(0, 3))
                     setData(res.data.data)
-                    console.log(res.data.data)
                 }
             }).catch(error => {
-                console.error('get error my history remark', error);
+                console.error('error get my history remark', error);
             })
             .finally(() => {
                 setLoading(false);
