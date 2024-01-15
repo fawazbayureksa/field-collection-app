@@ -28,6 +28,7 @@ export default function RemarkTask({ route }: routeProps): JSX.Element {
         type: '',
         phoneNumber: '',
         isAddress: '',
+        isBorrower: '',
         paymentAmount: '',
         ptpDate:'',
         paymentProof: null,
@@ -230,6 +231,7 @@ export default function RemarkTask({ route }: routeProps): JSX.Element {
                     <Picker.Item label="Bayar Sebagian" value="partial" />
                     <Picker.Item label="Permintaan Keringanan" value="payment_relief" />
                     <Picker.Item label="Gagal Bayar" value="failed_payment" />
+                    <Picker.Item label="Titip Surat" value="leave_letter" />
                 </Picker>
             </View>
             <View>
@@ -260,6 +262,24 @@ export default function RemarkTask({ route }: routeProps): JSX.Element {
                     <Picker.Item label="Pilih" value="" />
                     <Picker.Item label="Sesuai Alamat" value={true} />
                     <Picker.Item label="Tidak Sesuai Alamat" value={false} />
+                </Picker>
+            </View>
+
+            <View>
+                <Text style={[styles.fs14, {
+                    fontWeight: "700",
+                    color: colors.dark
+                }]}>Tipe Peminjam ?<Text style={{ color: 'red' }}>(wajib isi)</Text></Text>
+                <Picker
+                    selectedValue={formData.isBorrower}
+                    onValueChange={(value) => setFormData({ ...formData, isBorrower: value })}
+                    style={styles.inputRemark}
+                    mode="dropdown"
+                    dropdownIconColor={colors.dark} dropdownIconRippleColor={colors.primary}
+                >
+                    <Picker.Item label="Pilih" value="" />
+                    <Picker.Item label="Sensitif" value={true} />
+                    <Picker.Item label="Tidak Sensitif" value={false} />
                 </Picker>
             </View>
 

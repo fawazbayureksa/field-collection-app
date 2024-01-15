@@ -3,6 +3,7 @@ import { Dimensions, Text, TouchableOpacity, View, StyleSheet } from 'react-nati
 import { Badge, Divider } from 'react-native-paper';
 import colors from '../assets/theme/colors';
 import { styles } from '../assets/theme/styles';
+import {convertDateTime} from './DateTimeFormat';
 import convertDate from './DateTimeFormat';
 import CurrencyFormat from './CurrencyFormat';
 import { typeRemarks } from '../constants/typeRemarks';
@@ -53,8 +54,8 @@ const CardHistoryTask: React.FC<CardHsitoryTaskProps> = ({ item,handlePress }) =
                         <Text style={[styles.fs12, { color: colors.dark }]}>
                             Waktu : 
                         </Text>
-                        <Text style={[styles.fs12, { color: colors.dark,marginLeft:10,fontWeight:"600" }]}>
-                            {convertDate(item.created_at)}
+                        <Text style={[styles.fs12, { color: colors.dark,marginLeft:5,fontWeight:"600" }]}>
+                            {convertDateTime(item.created_at)}
                         </Text>
                     </View>
                 </View>
@@ -116,6 +117,18 @@ const CardHistoryTask: React.FC<CardHsitoryTaskProps> = ({ item,handlePress }) =
                         <View style={styles.col9}>
                             <Text style={[styles.fs12, { color: colors.dark,fontWeight:"700" }]}>
                                 { item.ptp_date ? convertDate(item.ptp_date) : "-"}
+                            </Text>
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: "row", marginTop: 5 }}>
+                        <View style={styles.col6}>
+                            <Text style={[styles.fs12, { color: colors.dark }]}>
+                                Catatan
+                            </Text>
+                        </View>
+                        <View style={styles.col9}>
+                            <Text style={[styles.fs12, { color: colors.dark }]}>
+                                { item.message}
                             </Text>
                         </View>
                     </View>

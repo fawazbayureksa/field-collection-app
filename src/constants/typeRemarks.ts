@@ -8,4 +8,5 @@ export function typeRemarks(type:string) {
     if (type == 'partial') return {'text' : 'Sebagian','color':colors.yellow};
     if (type == 'payment_relief') return  {'text' : 'Permintaan Keringanan','color':colors.yellow};
     if (type == 'failed_payment') return {'text' : 'Gagal Bayar','color':colors.danger};
+    if (type == 'leave_letter') return {'text' : 'Titip Surat','color':colors.yellow};
 }

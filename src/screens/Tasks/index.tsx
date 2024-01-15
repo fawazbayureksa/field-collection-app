@@ -30,7 +30,7 @@ function Tasks(): JSX.Element {
 
     const [data, setData] = useState<Array<any>>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [tabName, setTabName] = useState([{ name: 'Hari Ini', id: 'today' }, { name: 'Bayar Sebagian', id: 'partial' }, { name: 'Janji Bayar', id: 'promise_to_pay' }])
+    const [tabName, setTabName] = useState([{ name: 'Hari Ini', id: 'today' }, { name: 'Bayar Sebagian', id: 'partial' }, { name: 'Janji Bayar (Koperatif)', id: 'promise_to_pay_cooperative' }, { name: 'Janji Bayar (Tidak Koperatif)', id: 'promise_to_pay' },{ name: 'Titip Surat', id: 'leave_letter' }])
     // { name: 'Lunas', id: 'paid_off' }
     
     const [selectedTab, setSelectedTab] = useState("semua");
@@ -119,7 +119,7 @@ function Tasks(): JSX.Element {
                 }}
             >
                 <View style={[styles.centeredView, { marginHorizontal: 20}]}>
-                    <View style={[styles.modalView, { width: WIDTH, backgroundColor:colors.accent }]}>
+                    <View style={[styles.modalView, { width: WIDTH, backgroundColor:colors.accent_primary }]}>
                             <TouchableOpacity
                                 style={{
                                     position: 'absolute',
@@ -131,11 +131,8 @@ function Tasks(): JSX.Element {
                                 onPress={() => setModalVisible(!modalVisible)}>
                                 <CloseCircle size="24" color={colors.white} variant="Outline"/>
                             </TouchableOpacity>
-                        {/* <View style={{ flexDirection: "row", justifyContent: "center",marginTop:10 }}> */}
-                            {/* <Text style={{ fontSize: 18, fontWeight: "600",color:colors.white }}>Modal Filter</Text> */}
-                        {/* </View> */}
                         <View style={{flexDirection:"row",marginVertical:20,alignItems:"center"}}>
-                                <TouchableOpacity style={{flexDirection:"row",alignItems:"center"}} onPress={showDatePicker}>
+                                <TouchableOpacity style={{flexDirection:"row",alignItems:"center",justifyContent:"center"}} onPress={showDatePicker}>
                                      <Calendar size="40" color={colors.white} variant='Bold'/>
                                      <View style={{backgroundColor:colors.white,borderRadius:5,padding:5}}>
                                         <Text  style={{ fontSize: 14, color: colors.accent }}>Mulai</Text>
@@ -152,10 +149,9 @@ function Tasks(): JSX.Element {
                                      </View>
                                 </TouchableOpacity>
                                 <View style={{marginHorizontal:10}}>
-                                    <ArrowSwapHorizontal size="20" color="#FFFFFF" variant="Outline"/>
+                                    <ArrowSwapHorizontal size="30" color="#FFFFFF" variant="Bold"/>
                                 </View>
-                                <TouchableOpacity style={{flexDirection:"row",alignItems:"center"}} onPress={() => setDatePickerVisibilityEnd(!isDatePickerVisibleEnd)}>
-                                     <Calendar size="32" color={colors.white} variant='Bold'/>
+                                <TouchableOpacity style={{flexDirection:"row",alignItems:"center",justifyContent:"center"}} onPress={() => setDatePickerVisibilityEnd(!isDatePickerVisibleEnd)}>
                                      <View style={{backgroundColor:colors.white,borderRadius:5,padding:5}}>
                                         <Text  style={{ fontSize: 14, color: colors.accent }}>Akhir</Text>
                                      <DateTimePickerModal
@@ -169,6 +165,7 @@ function Tasks(): JSX.Element {
                                         {convertDate2(endDate)}
                                     </Text>
                                      </View>
+                                    <Calendar size="40" color={colors.white} variant='Bold'/>
                                 </TouchableOpacity>
                         </View>
                         <View style={{ flexDirection: "row-reverse", marginTop: 20 }}>
@@ -197,12 +194,12 @@ function Tasks(): JSX.Element {
                                     height: 30,
                                     borderRadius: 10,
                                     marginLeft: 20,
-                                    backgroundColor: colors.danger,
+                                    backgroundColor: colors.white,
                                     flexDirection:"row"
                                 }}
                                 onPress={() => { setIsFilter(false); setModalVisible(!modalVisible) }}>
-                                    <ArrowRotateLeft size="14" color={colors.white}/>
-                                <Text style={{ fontSize: 12, color: colors.white }}>Reset</Text>
+                                    <ArrowRotateLeft size="14" color={colors.danger}/>
+                                <Text style={{ fontSize: 14, color: colors.danger }}>Reset</Text>
                             </Pressable>
                         </View>
                     </View>

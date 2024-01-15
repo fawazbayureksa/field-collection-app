@@ -1,11 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Dimensions, ScrollView, Text, View,TouchableOpacity, Image, RefreshControl, Animated, Easing,ImageProps } from 'react-native'
+import { Dimensions, ScrollView, Text, View,TouchableOpacity, Image, RefreshControl, Animated, Easing,ImageProps, Modal, Pressable, FlatList } from 'react-native'
 import colors from '../../assets/theme/colors';
 import { styles } from '../../assets/theme/styles';
-import {  Setting4, Setting5 } from 'iconsax-react-native';
+import {  ArrowRotateLeft, ArrowSwapHorizontal, Calendar, CloseCircle, SearchNormal1, Setting4, Setting5 } from 'iconsax-react-native';
 import CardHistoryTask from '../../components/CardHistoryTask';
 import axiosInstance from '../../components/AxiosInstance';
 import { Skeleton } from '../../components/Skeleton';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { Divider } from 'react-native-paper';
+import { convertDate2 } from '../../components/DateTimeFormat';
+import { Picker } from '@react-native-picker/picker';
 
 type Props = {}
 
@@ -24,11 +28,24 @@ function HistoryTask({}: Props) {
     const [modalUp, setModalUp] = useState(false);
     const [images, setImages] = useState<ImagesProps | undefined>();
 
+    // Filter
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [isDatePickerVisibleEnd, setDatePickerVisibilityEnd] = useState(false);
+    const [isFilter, setIsFilter] = useState<boolean>(false);
+    const [type,setType] = useState("");
+
+    const [isLoadMore, setIsLoadMore] = useState(false);
+    const [lastPage, setLastPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
+ 
     const translateY = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         getHistoryRemarks()
-    },[]);
+    },[type]);
 
 
     
@@ -50,6 +67,10 @@ function HistoryTask({}: Props) {
         setLoading(true);
 
         let params = {
+            is_type: type ? type : 'all',
+            filter: isFilter ? "true" : "false",
+            entry_start_date: startDate,
+            entry_end_date: endDate,
             page:1,
             per_page:10
         }
@@ -57,6 +78,8 @@ function HistoryTask({}: Props) {
             .then(res => {
                 if (res.data.status === 'success') {
                     setData(res.data.data)
+                    setCurrentPage(res.data.pagination.currentPage);
+                    setLastPage(res.data.pagination.totalPages);
                 }
             }).catch(error => {
                 console.error('error get my history remark', error);
@@ -65,6 +88,64 @@ function HistoryTask({}: Props) {
                 setLoading(false);
             });
     }
+
+    const handleFilter = () => {
+        hideDatePicker();
+        hideDatePickerEnd();
+        setModalVisible(!modalVisible);
+        setIsFilter(!isFilter);
+    };
+
+    const hideDatePicker = () => {
+        setDatePickerVisibility(false);
+    };
+
+    const hideDatePickerEnd = () => {
+        setDatePickerVisibilityEnd(false);
+    };
+    const showDatePicker = () => {
+        setDatePickerVisibility(true);
+    };
+
+    const handleConfirm = (date: any, type: string) => {
+        if (type == 'startDate') {
+            setStartDate(date);
+        } else {
+            setEndDate(date);
+        }
+    };
+
+    const handlePagination = async () => {
+        let filter = {
+            is_type: type ? type : 'all',
+            page: 1,
+            per_page: 5,
+            filter: isFilter ? "true" : "false",
+            entry_start_date: startDate,
+            entry_end_date: endDate,
+        }
+        
+        let newPage = currentPage + 1;
+
+        if (newPage > lastPage) {
+            return;
+        } else if (isLoadMore) {
+            return;
+        } else {
+            let params = {
+                ...filter,
+                page: newPage
+            };
+            setIsLoadMore(true);
+        await axiosInstance
+            .get(`history-remarks`, { params })
+            .then(res => {
+                const newList = data.concat(res.data.data);
+                setData(newList);
+                setCurrentPage(newPage);
+            }).finally(() => setIsLoadMore(false));
+    }
+    };
 
     const getImageData = (id:number) => {
         axiosInstance.get(`getImage/${id}`)
@@ -88,6 +169,28 @@ function HistoryTask({}: Props) {
     const refreshControl = () => {
         getHistoryRemarks();
     }
+
+    const _renderItem = (value:any,index:number) => (
+        <CardHistoryTask item={value} handlePress={() => showModal(value.id)} />
+    )
+
+    const renderFooter = () => {
+        return (
+            <>
+                {isLoadMore && (
+                      <View style={{
+                        alignItems: "center",
+                        marginHorizontal: 20,
+                        marginVertical: 10
+                    }}>{
+                    [3,2,1].map((item) => (
+                        <Skeleton width={WIDTH} height={135} bgColor='#eeeeee' key={item} />
+                    ))}
+                    </View>
+                )}
+            </>
+        );
+    };
 
   return (
     <>
@@ -134,7 +237,9 @@ function HistoryTask({}: Props) {
                     justifyContent: "center",
                     alignItems:"center",
                     flexDirection:"row"
-                }}>
+                }}
+                onPress={() => setModalVisible(!modalVisible)}
+                >
                     <Setting5
                         size="12"
                         color={colors.dark}
@@ -158,15 +263,38 @@ function HistoryTask({}: Props) {
                     ))}
                 </View>
                 :
-                data.length > 0 ?
-                    data.map((value:any) => (
-                        <CardHistoryTask item={value} handlePress={() => showModal(value.id)} />
-                    )) 
-                :
-                <View style={{ flex: 1, justifyContent: "center", flexDirection: "column", alignItems: "center" }}>
-                    <Image source={require('../../assets/images/empty.png')} style={{ width: 150, maxHeight: 150 }} />
-                    <Text>Tidak Ada Data</Text>
-                </View>
+                // data.length > 0 ?
+                //     data.map((value:any) => (
+                //         <View key={value.id}>
+                //             <CardHistoryTask item={value} handlePress={() => showModal(value.id)} />
+                //         </View>
+                //     )) 
+                // :
+                // <View style={{ flex: 1, justifyContent: "center", flexDirection: "column", alignItems: "center" }}>
+                //     <Image source={require('../../assets/images/empty.png')} style={{ width: 150, maxHeight: 150 }} />
+                //     <Text>Tidak Ada Data</Text>
+                // </View>
+                <ScrollView>
+                <FlatList
+                    nestedScrollEnabled={true}
+                    data={data}
+                    renderItem={({ item, index }) => _renderItem(item, index)}
+                    keyExtractor={({ item }) => item?.id}
+                    onEndReached={() => handlePagination()}
+                    onEndReachedThreshold={0.5}
+                    ListFooterComponent={renderFooter}
+                    ListEmptyComponent={() => ( 
+                        <View style={{
+                            alignItems: "center",
+                            marginHorizontal: 20,
+                            marginVertical: 200
+                        }}>
+                            <Image source={require('../../assets/images/empty.png')} style={{ width: 150, maxHeight: 150 }} />
+                            <Text>Tidak Ada Data</Text>
+                        </View>
+                    )}
+                />
+            </ScrollView>
             }
     </ScrollView>
     {(modalUp && images) &&
@@ -203,7 +331,7 @@ function HistoryTask({}: Props) {
                         {(images.visit_proof != null) &&
                         <Image
                             style={{
-                                width:200,
+                                width:WIDTH * 0.4,
                                 height:200,
                                 resizeMode: 'contain',
                                 marginBottom: 10,
@@ -222,7 +350,7 @@ function HistoryTask({}: Props) {
                          {(images.payment_proof != null) &&
                             <Image
                                 style={{
-                                    width:200,
+                                    width:WIDTH * 0.4,
                                     height: 200,
                                     resizeMode: 'contain',
                                     marginBottom: 10,
@@ -236,6 +364,123 @@ function HistoryTask({}: Props) {
                 </View>
             </Animated.View>
         }
+         <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                }}
+            >
+                <View style={[styles.centeredView, { marginHorizontal: 20}]}>
+                    <View style={[styles.modalView, { width: WIDTH, backgroundColor:colors.accent }]}>
+                            <TouchableOpacity
+                                style={{
+                                    position: 'absolute',
+                                    right:5,
+                                    padding: 5,
+                                    height: 30,
+                                    borderRadius: 10,
+                                }}
+                                onPress={() => setModalVisible(!modalVisible)}>
+                                <CloseCircle size="24" color={colors.white} variant="Outline"/>
+                            </TouchableOpacity>
+                        
+                        <View style={{ flex: 1, flexDirection: "row", alignItems: "center",marginVertical:10 }}>
+                            <View>
+                                <Picker
+                                    selectedValue={type}
+                                    onValueChange={(value) => setType(value)}
+                                    style={[styles.inputRemark,{color :colors.white}]}
+                                    mode="dropdown"
+                                    numberOfLines={5}
+                                    dropdownIconColor={colors.white} dropdownIconRippleColor={colors.white}
+                                >
+                                    <Picker.Item label="Pilih Status" value="" />
+                                    <Picker.Item label="Lunas" value="paid_off" />
+                                    <Picker.Item label="Janji Bayar (Tidak Kooperatif)" value="promise_to_pay" />
+                                    <Picker.Item label="Janji Bayar (Kooperatif)" value="promise_to_pay_cooperative" />
+                                    <Picker.Item label="Bayar Sebagian" value="partial" />
+                                    <Picker.Item label="Permintaan Keringanan" value="payment_relief" />
+                                    <Picker.Item label="Gagal Bayar" value="failed_payment" />
+                                    <Picker.Item label="Titip Surat" value="leave_letter" />
+                                </Picker>
+                            </View>
+                        </View>
+                        <View style={{flexDirection:"row",marginVertical:20,alignItems:"center"}}>
+                                <TouchableOpacity style={{flexDirection:"row",alignItems:"center",justifyContent:"center"}} onPress={showDatePicker}>
+                                     <Calendar size="40" color={colors.white} variant='Bold'/>
+                                     <View style={{backgroundColor:colors.white,borderRadius:5,padding:5}}>
+                                        <Text  style={{ fontSize: 14, color: colors.accent }}>Mulai</Text>
+                                            <DateTimePickerModal
+                                                isVisible={isDatePickerVisible}
+                                                mode="date"
+                                                onConfirm={(date) => handleConfirm(date, 'startDate')}
+                                                onCancel={hideDatePicker}
+                                            />
+                                            <Divider />
+                                            <Text style={{ color:colors.accent,fontWeight:"600" }}>
+                                                {convertDate2(startDate)}
+                                            </Text>
+                                     </View>
+                                </TouchableOpacity>
+                                <View style={{marginHorizontal:10}}>
+                                    <ArrowSwapHorizontal size="30" color="#FFFFFF" variant="Bold"/>
+                                </View>
+                                <TouchableOpacity style={{flexDirection:"row",alignItems:"center",justifyContent:"center"}} onPress={() => setDatePickerVisibilityEnd(!isDatePickerVisibleEnd)}>
+                                     <View style={{backgroundColor:colors.white,borderRadius:5,padding:5}}>
+                                        <Text  style={{ fontSize: 14, color: colors.accent }}>Akhir</Text>
+                                     <DateTimePickerModal
+                                        isVisible={isDatePickerVisibleEnd}
+                                        mode="date"
+                                        onConfirm={(date) => handleConfirm(date, 'endDate')}
+                                        onCancel={hideDatePickerEnd}
+                                    />
+                                     <Divider />
+                                    <Text style={{ color:colors.accent,fontWeight:"600" }}>
+                                        {convertDate2(endDate)}
+                                    </Text>
+                                     </View>
+                                    <Calendar size="40" color={colors.white} variant='Bold'/>
+                                </TouchableOpacity>
+                        </View>
+                        <View style={{ flexDirection: "row-reverse", marginTop: 20 }}>
+                            <Pressable
+                                style={{
+                                    padding: 5,
+                                    width: 80,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    height: 30,
+                                    borderRadius: 10,
+                                    marginLeft: 20,
+                                    backgroundColor: colors.white,
+                                    flexDirection:"row"
+                                }}
+                                onPress={handleFilter}>
+                                    <SearchNormal1 size="14" color={colors.accent} variant="Outline" />
+                                <Text style={{ fontSize: 14, color: colors.accent }}>Cari</Text>
+                            </Pressable>
+                            <Pressable
+                                style={{
+                                    padding: 5,
+                                    width: 80,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    height: 30,
+                                    borderRadius: 10,
+                                    marginLeft: 20,
+                                    backgroundColor: colors.white,
+                                    flexDirection:"row"
+                                }}
+                                onPress={() => { setIsFilter(false); setModalVisible(!modalVisible);setType('') }}>
+                                    <ArrowRotateLeft size="14" color={colors.danger}/>
+                                <Text style={{ fontSize: 14, color: colors.danger }}>Reset</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </View>
+        </Modal>
     </>
   )
 }

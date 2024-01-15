@@ -227,6 +227,7 @@ function HomeScreen(): JSX.Element {
                         </TouchableOpacity>
                     </View>
                     <View style={{ marginTop: 20, justifyContent: "center", alignItems: "center" }}>
+                        <Text style={{color:colors.grey,marginBottom:10,fontWeight:"600"}}>Tugas Terbaru</Text>
                         {isLoading ?
                                 [3,2,1].map((item,index) => (
                                     <View key={index}>
